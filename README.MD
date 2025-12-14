@@ -205,15 +205,49 @@ The service uses simulated AI-based anomaly scoring:
 
 ## Known Limitations
 
-- Data is lost on server restart (in-memory storage)
-- No authentication/authorization
-- No connection deduplication
+### Storage & Persistence
+- **In-memory storage only**: All data (policies and connections) is lost on server restart
+- **No horizontal scaling**: Global store instances prevent running multiple server instances
+
+### Security
+- **No authentication/authorization**: API is completely open with no auth mechanism (API keys, JWT, OAuth, etc.)
+- **No HTTPS enforcement**: Server runs on plain HTTP by default
+- **No rate limiting**: No protection against abuse or denial-of-service attacks
+
+### Policy Engine
+- **Limited operators**: Only `==` and `!=` are implemented; `>`, `<`, `>=`, `<=`, and `in` operators are not yet available
+- **No policy editing**: Policies can only be created or deleted, not updated in place
+- **No policy reordering**: Cannot change evaluation order of policies after creation
+- **Hardcoded anomaly threshold**: The 0.8 escalation threshold is not configurable
+
+### Validation & Input
+- **No IP address validation**: IP addresses are accepted as plain strings without format validation
+- **No port range validation**: Port numbers are not checked for valid range (1-65535)
+
+### API & Scalability
+- **No pagination**: `GET /policies` returns all policies at once, which won't scale with large datasets
+- **No connection listing endpoint**: Cannot list all stored connections via the API
+- **No health check endpoint**: No `/health` or `/ready` endpoints for container orchestration
+
+### Observability
+- **No logging**: No request logging or audit trail
+- **No metrics/monitoring**: No built-in performance metrics or alerting
 
 ## Future Improvements
-
-- Add database persistence (PostgreSQL/Redis)
-- Implement real AI/ML anomaly detection
-- Add authentication and rate limiting
-- Connection logging and analytics
-- Policy versioning and audit trail
+- Add database persistence 
+- Implement authentication and authorization (API keys, JWT)
+- Add remaining policy operators (`>`, `<`, `>=`, `<=`, `in`)
+- Add input validation for IP addresses and port ranges
+- Implement real AI/ML anomaly detection model
+- Add policy editing (PUT/PATCH endpoints)
+- Allow users to reorder policies
+- Add pagination for list endpoints
+- Add connection listing endpoint with filtering
+- Configurable anomaly threshold
+- Add health check and readiness endpoints
+- Implement logging
+- Add metrics endpoint (Prometheus-compatible)
+- Support additional protocols (ICMP, etc.)
+- Add rate limiting
+- HTTPS/TLS support
 
