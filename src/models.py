@@ -24,10 +24,6 @@ class Operator(str, Enum):
     """Comparison operators for policy conditions."""
     EQ = "=="
     NE = "!="
-    GT = ">"
-    LT = "<"
-    GE = ">="
-    LE = "<="
 
 
 class ConnectionRequest(BaseModel):

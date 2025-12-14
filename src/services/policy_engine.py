@@ -14,18 +14,11 @@ class PolicyEngine:
     """
 
     def _get_field_value(self, connection: ConnectionRequest, field: str) -> Any:
-        """Extract a field value from a connection request.
-
-        Supports nested fields using dot notation (e.g., 'protocol.value').
-        Automatically unwraps enum values when accessing enum fields directly.
-        """
+        """Extract a field value from a connection request."""
         try:
-            value = connection
-            for attr in field.split("."):
-                value = getattr(value, attr)
-
-            # Automatically unwrap enum values for direct enum field access
-            if hasattr(value, "value") and not "." in field:
+            value = getattr(connection, field)
+            # Automatically unwrap enum values
+            if hasattr(value, "value"):
                 return value.value
             return value
         except AttributeError:
@@ -54,14 +47,6 @@ class PolicyEngine:
                 return str(actual_value) == str(expected_value)
             case Operator.NE:
                 return str(actual_value) != str(expected_value)
-            case Operator.GT:
-                return actual_value > expected_value
-            case Operator.LT:
-                return actual_value < expected_value
-            case Operator.GE:
-                return actual_value >= expected_value
-            case Operator.LE:
-                return actual_value <= expected_value
 
     def _matches_policy(self, connection: ConnectionRequest, policy: Policy) -> bool:
         """Check if a connection matches all conditions of a policy."""
